@@ -1,0 +1,28 @@
+name: new-api
+
+services:
+  new-api:
+    image: ${NEW_API_IMAGE:-crpi-0i06zfbhrbl4bf0a.cn-guangzhou.personal.cr.aliyuncs.com/logwing/new-api:latest}
+    restart: unless-stopped
+    ports:
+      - "${NEW_API_BIND_ADDRESS:-127.0.0.1}:${NEW_API_PORT:-3000}:3000"
+    volumes:
+      - ./data:/data
+    environment:
+      SQL_DSN: ${SQL_DSN:?Set the PostgreSQL connection string}
+      REDIS_CONN_STRING: ${REDIS_CONN_STRING:?Set the Redis connection string}
+      SESSION_SECRET: ${SESSION_SECRET:?Set a persistent session secret}
+      TZ: Asia/Shanghai
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -Eq '\"success\":[[:space:]]*true'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  backend:
+    external: true
+    name: ${REDIS_DOCKER_NETWORK:-new-api-backend}
