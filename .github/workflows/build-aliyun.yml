@@ -39,6 +39,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
+          provenance: false
           tags: |
             ${{ vars.ACR_REGISTRY }}/${{ vars.ACR_NAMESPACE }}/new-api:latest
             ${{ vars.ACR_REGISTRY }}/${{ vars.ACR_NAMESPACE }}/new-api:sha-${{ github.sha }}
